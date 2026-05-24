@@ -57,7 +57,7 @@ pip install -r requirements.txt
 Download the STATS19 accident data from the UK Department for Transport:
 https://www.data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-safety-data
 
-Place the cleaned CSV at `data/stats19_clean.csv`. The notebooks in `/notebooks` walk through the cleaning and feature engineering steps.
+Place the cleaned CSV at `data/stats19_clean.csv`. The notebooks in `/notebooks` walk through the cleaning and feature engineering steps I performed. You may also view the data folder.
 
 **3. Train the model**
 
