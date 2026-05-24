@@ -4,10 +4,13 @@ import joblib
 import numpy as np
 
 import os
-import joblib
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "xgb_fatal_predictor.pkl")
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictor.pkl"
+
+print("Loading model from:", MODEL_PATH)
 
 model = joblib.load(MODEL_PATH)
 

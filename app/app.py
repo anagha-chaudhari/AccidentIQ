@@ -400,9 +400,15 @@ label[data-testid="stWidgetLabel"] {
 </style>
 """, unsafe_allow_html=True)
 
+from pathlib import Path
+
 @st.cache_resource
 def load_model():
-    return joblib.load("../models/xgb_fatal_predictor.pkl")
+
+    BASE_DIR = Path(__file__).resolve().parent
+    MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictor.pkl"
+
+    return joblib.load(MODEL_PATH)
 
 model = load_model()
 
