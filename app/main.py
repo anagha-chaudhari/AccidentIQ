@@ -3,7 +3,13 @@ from pydantic import BaseModel
 import joblib
 import numpy as np
 
-model = joblib.load("../models/xgb_fatal_predictor.pkl")
+import os
+import joblib
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "xgb_fatal_predictor.pkl")
+
+model = joblib.load(MODEL_PATH)
 
 app = FastAPI(title="AccidentIQ", version="1.0")
 
