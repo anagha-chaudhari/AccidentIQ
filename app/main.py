@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictor.pkl"
+MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictorv.pkl"
 
 print("Loading model from:", MODEL_PATH)
 

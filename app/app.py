@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import joblib
 import math
+from pathlib import Path
 
 st.set_page_config(
     page_title="AccidentIQ",
@@ -12,7 +13,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Barlow:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Barlow:wght@700;800;900&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,7 +23,7 @@ html, body,
 .main, .block-container {
     background: #f5f6f8 !important;
     color: #1a2340;
-    font-family: 'Inter', 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 section[data-testid="stMain"] > div { padding-top: 0 !important; }
@@ -32,7 +33,7 @@ section[data-testid="stMain"] > div { padding-top: 0 !important; }
 [data-testid="stToolbar"],
 [data-testid="stDecoration"] { display: none !important; }
 
-/* ── TOP BAR — Indian tricolour stripe + navy ── */
+/* TOP BAR */
 .aiq-topbar {
     background: #0a2252;
     border-bottom: 4px solid #FF6200;
@@ -64,23 +65,18 @@ section[data-testid="stMain"] > div { padding-top: 0 !important; }
     letter-spacing: -0.02em;
 }
 
-.aiq-wordmark em {
-    color: #FF6200;
-    font-style: normal;
-}
+.aiq-wordmark em { color: #FF6200; font-style: normal; }
 
 .aiq-subtitle-bar {
     font-size: 0.72rem;
     color: rgba(255,255,255,0.45);
     font-weight: 400;
-    letter-spacing: 0.01em;
     margin-top: 1px;
 }
 
 .aiq-topbar-tags { display: flex; gap: 8px; align-items: center; }
 
 .aiq-tag {
-    font-family: 'Inter', monospace;
     font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.09em;
@@ -97,28 +93,24 @@ section[data-testid="stMain"] > div { padding-top: 0 !important; }
     background: rgba(255,98,0,0.08);
 }
 
-/* ── LAYOUT ── */
-.aiq-layout { display: grid; grid-template-columns: 1fr 400px; min-height: calc(100vh - 68px); gap: 0; }
-
+/* LAYOUT */
 .panel-left {
-    padding: 28px 32px 40px;
+    padding: 24px 28px 40px;
     background: #ffffff;
     border-right: 1px solid #e2e6ef;
-    overflow-y: auto;
 }
 
 .panel-right {
-    padding: 28px 28px 40px;
+    padding: 24px 24px 40px;
     background: #f5f6f8;
-    overflow-y: auto;
 }
 
-/* ── SECTION HEADING ── */
+/* SECTION HEADING */
 .sec-head {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     margin-top: 4px;
 }
 
@@ -130,7 +122,6 @@ section[data-testid="stMain"] > div { padding-top: 0 !important; }
 }
 
 .sec-head-label {
-    font-family: 'Inter', sans-serif;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -140,7 +131,7 @@ section[data-testid="stMain"] > div { padding-top: 0 !important; }
 
 .sec-head-line { flex: 1; height: 1px; background: #e2e6ef; }
 
-/* ── FORM CONTROLS ── */
+/* FORM CONTROLS */
 label[data-testid="stWidgetLabel"] p,
 label[data-testid="stWidgetLabel"] {
     font-family: 'Inter', sans-serif !important;
@@ -157,10 +148,8 @@ label[data-testid="stWidgetLabel"] {
     border: 1.5px solid #dde1ed !important;
     border-radius: 7px !important;
     color: #1a2340 !important;
-    font-family: 'Inter', sans-serif !important;
     font-size: 0.88rem !important;
     font-weight: 500 !important;
-    transition: border-color 0.18s !important;
     box-shadow: none !important;
 }
 
@@ -176,7 +165,6 @@ label[data-testid="stWidgetLabel"] {
 }
 
 [data-baseweb="menu"] li {
-    font-family: 'Inter', sans-serif !important;
     font-size: 0.88rem !important;
     color: #1a2340 !important;
     font-weight: 400 !important;
@@ -187,41 +175,33 @@ label[data-testid="stWidgetLabel"] {
 [data-testid="stSlider"] > div > div > div > div { background: #0a2252 !important; }
 [data-testid="stSlider"] > div > div > div { background: #dde1ed !important; }
 
-/* ── BUTTON ── */
+/* BUTTON */
 [data-testid="stButton"] button {
     background: #0a2252 !important;
     color: #fff !important;
     border: none !important;
     border-radius: 7px !important;
-    font-family: 'Inter', sans-serif !important;
     font-weight: 600 !important;
     font-size: 0.9rem !important;
-    letter-spacing: 0.02em !important;
     padding: 11px 28px !important;
     width: 100% !important;
-    cursor: pointer !important;
-    transition: background 0.18s, box-shadow 0.18s, transform 0.1s !important;
     box-shadow: 0 3px 12px rgba(10,34,82,0.22) !important;
+    transition: all 0.18s !important;
 }
 
 [data-testid="stButton"] button:hover {
     background: #0d2d6b !important;
-    box-shadow: 0 5px 18px rgba(10,34,82,0.3) !important;
     transform: translateY(-1px) !important;
 }
 
-[data-testid="stButton"] button:active { transform: scale(0.99) !important; }
+/* DIVIDER */
+.div { height: 1px; background: #e2e6ef; margin: 20px 0; }
 
-/* ── DIVIDER ── */
-.div { height: 1px; background: #e2e6ef; margin: 22px 0; }
-
-/* ── RIGHT PANEL CARDS ── */
-
-/* Empty state */
+/* EMPTY STATE */
 .empty-state {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; padding: 64px 24px; gap: 14px;
+    text-align: center; padding: 60px 24px; gap: 14px;
 }
 
 .empty-icon {
@@ -236,12 +216,12 @@ label[data-testid="stWidgetLabel"] {
 .empty-title { font-size: 1rem; font-weight: 600; color: #8892aa; }
 .empty-sub { font-size: 0.83rem; color: #adb5c8; line-height: 1.65; max-width: 220px; }
 
-/* Risk big card */
+/* RISK CARD */
 .risk-big-card {
     background: #ffffff;
     border-radius: 10px;
     border: 1.5px solid #e2e6ef;
-    padding: 24px 22px 20px;
+    padding: 22px 20px 18px;
     margin-bottom: 14px;
     border-top-width: 4px;
 }
@@ -252,7 +232,7 @@ label[data-testid="stWidgetLabel"] {
 
 .risk-meta-row {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .risk-meta-label {
@@ -271,20 +251,15 @@ label[data-testid="stWidgetLabel"] {
 .risk-badge.MEDIUM { background: #fff4ec; color: #b84500; border: 1.5px solid #fcd5b0; }
 .risk-badge.LOW    { background: #edf7ee; color: #138808; border: 1.5px solid #b5d9b6; }
 
-/* Big number */
 .risk-number {
-    font-family: 'Barlow', 'Inter', sans-serif;
-    font-size: 5.8rem;
+    font-family: 'Barlow', sans-serif;
+    font-size: 5.5rem;
     font-weight: 900;
     line-height: 0.88;
     letter-spacing: -0.03em;
 }
 
-.risk-number sup {
-    font-size: 2rem; font-weight: 800;
-    vertical-align: super; letter-spacing: 0;
-}
-
+.risk-number sup { font-size: 2rem; font-weight: 800; vertical-align: super; }
 .risk-number.HIGH   { color: #c0000a; }
 .risk-number.MEDIUM { color: #FF6200; }
 .risk-number.LOW    { color: #138808; }
@@ -296,8 +271,7 @@ label[data-testid="stWidgetLabel"] {
 
 .risk-baseline strong { color: #3d4a68; font-weight: 600; }
 
-/* Progress bar */
-.prog-wrap { margin-top: 16px; }
+.prog-wrap { margin-top: 14px; }
 
 .prog-labels {
     display: flex; justify-content: space-between;
@@ -311,24 +285,24 @@ label[data-testid="stWidgetLabel"] {
     border-radius: 100px; overflow: hidden;
 }
 
-.prog-fill { height: 100%; border-radius: 100px; transition: width 0.7s ease; }
-.prog-fill.HIGH   { background: linear-gradient(90deg, #FF6200 0%, #c0000a 100%); }
-.prog-fill.MEDIUM { background: linear-gradient(90deg, #138808 0%, #FF6200 100%); }
-.prog-fill.LOW    { background: linear-gradient(90deg, #2e7d32 0%, #4caf50 100%); }
+.prog-fill { height: 100%; border-radius: 100px; }
+.prog-fill.HIGH   { background: linear-gradient(90deg, #FF6200, #c0000a); }
+.prog-fill.MEDIUM { background: linear-gradient(90deg, #138808, #FF6200); }
+.prog-fill.LOW    { background: linear-gradient(90deg, #2e7d32, #4caf50); }
 
-/* Explain box */
+/* EXPLAIN BOX */
 .explain-box {
     background: #f8f9fc;
     border-left: 3px solid #0a2252;
     border-radius: 0 8px 8px 0;
-    padding: 13px 15px;
-    margin-bottom: 18px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
 }
 
 .explain-box p { font-size: 0.83rem; color: #4a5578; line-height: 1.7; }
 
-/* Stat chips */
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; }
+/* STAT CHIPS */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px; }
 
 .stat-chip {
     background: #ffffff;
@@ -338,7 +312,7 @@ label[data-testid="stWidgetLabel"] {
 }
 
 .stat-chip-val {
-    font-family: 'Barlow', 'Inter', sans-serif;
+    font-family: 'Barlow', sans-serif;
     font-size: 1.4rem; font-weight: 800;
     color: #0a2252; line-height: 1; margin-bottom: 4px;
 }
@@ -353,11 +327,12 @@ label[data-testid="stWidgetLabel"] {
     border-left: 3px solid #dde1ed;
     border-radius: 0 8px 8px 0;
     padding: 11px 14px;
-    font-size: 0.79rem; color: #6b7a99; line-height: 1.65; margin-bottom: 18px;
+    font-size: 0.79rem; color: #6b7a99; line-height: 1.65;
+    margin-bottom: 16px;
 }
 
-/* SHAP bars */
-.shap-legend { display: flex; gap: 18px; margin-bottom: 14px; }
+/* SHAP BARS */
+.shap-legend { display: flex; gap: 18px; margin-bottom: 12px; }
 
 .shap-legend-item {
     display: flex; align-items: center; gap: 6px;
@@ -370,14 +345,14 @@ label[data-testid="stWidgetLabel"] {
 
 .shap-row {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 9px; padding: 8px 12px;
+    margin-bottom: 8px; padding: 8px 12px;
     background: #ffffff; border-radius: 7px;
     border: 1px solid #eef0f7;
 }
 
 .shap-name {
     font-size: 0.73rem; font-weight: 500;
-    color: #3d4a68; width: 120px; flex-shrink: 0;
+    color: #3d4a68; width: 130px; flex-shrink: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
@@ -386,11 +361,16 @@ label[data-testid="stWidgetLabel"] {
 .shap-bar.up { background: #FF6200; }
 .shap-bar.dn { background: #0a2252; }
 
-.shap-val { font-family: 'Barlow', 'Inter', sans-serif; font-size: 0.78rem; font-weight: 700; min-width: 46px; text-align: right; flex-shrink: 0; }
+.shap-val {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    min-width: 46px; text-align: right; flex-shrink: 0;
+}
+
 .shap-val.up { color: #b84500; }
 .shap-val.dn { color: #0a2252; }
 
-/* Footer */
+/* FOOTER */
 .aiq-footer {
     font-size: 0.65rem; color: #adb5c8; text-align: center;
     padding: 20px 0 30px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -400,14 +380,10 @@ label[data-testid="stWidgetLabel"] {
 </style>
 """, unsafe_allow_html=True)
 
-from pathlib import Path
-
 @st.cache_resource
 def load_model():
-
     BASE_DIR = Path(__file__).resolve().parent
-    MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictor.pkl"
-
+    MODEL_PATH = BASE_DIR.parent / "models" / "xgb_fatal_predictorv.pkl"
     return joblib.load(MODEL_PATH)
 
 model = load_model()
@@ -462,40 +438,58 @@ with left:
     sec("Accident Conditions")
 
     c1, c2 = st.columns(2)
+
     with c1:
-        speed_limit = st.selectbox("Speed Limit (mph)", [20,30,40,50,60,70], index=2)
+        speed_limit = st.selectbox("Speed Limit (mph)", [20, 30, 40, 50, 60, 70], index=2)
+
         road_type = st.selectbox("Road Type",
-            options=[1,2,3,6,7,9],
-            format_func=lambda x: {1:"Roundabout",2:"One-way street",3:"Dual carriageway",
-                                    6:"Single carriageway",7:"Slip road",9:"Unknown"}[x],
-            index=3)
+            options=[1, 2, 3, 6, 7, 9],
+            format_func=lambda x: {
+                1: "Roundabout", 2: "One-way street", 3: "Dual carriageway",
+                6: "Single carriageway", 7: "Slip road", 9: "Unknown"
+            }[x], index=3)
+
         urban_or_rural = st.selectbox("Area Type",
-            options=[1,2,3],
-            format_func=lambda x: {1:"Urban",2:"Rural",3:"Unallocated"}[x])
+            options=[1, 2, 3],
+            format_func=lambda x: {1: "Urban", 2: "Rural", 3: "Unallocated"}[x])
+
         light_conditions = st.selectbox("Light Conditions",
-            options=[1,4,5,6,7],
-            format_func=lambda x: {1:"Daylight",4:"Dark — lights on",5:"Dark — lights off",
-                                    6:"Dark — no lighting",7:"Dark — unknown"}[x])
+            options=[1, 4, 5, 6, 7],
+            format_func=lambda x: {
+                1: "Daylight", 4: "Dark | lights on", 5: "Dark | lights off",
+                6: "Dark | no lighting", 7: "Dark | unknown"
+            }[x])
+
         weather = st.selectbox("Weather",
-            options=[1,2,3,4,5,6,7,8],
-            format_func=lambda x: {1:"Fine, no wind",2:"Raining",3:"Snowing",
-                                    4:"Fine + high wind",5:"Raining + high wind",
-                                    6:"Fog or mist",7:"Other",8:"Unknown"}[x])
+            options=[1, 2, 3, 4, 5, 6, 7, 8],
+            format_func=lambda x: {
+                1: "Fine, no wind", 2: "Raining", 3: "Snowing",
+                4: "Fine + high wind", 5: "Raining + high wind",
+                6: "Fog or mist", 7: "Other", 8: "Unknown"
+            }[x])
 
     with c2:
         road_surface = st.selectbox("Road Surface",
-            options=[1,2,3,4,5,9],
-            format_func=lambda x: {1:"Dry",2:"Wet / Damp",3:"Snow",
-                                    4:"Frost / Ice",5:"Flood",9:"Unknown"}[x])
+            options=[1, 2, 3, 4, 5, 9],
+            format_func=lambda x: {
+                1: "Dry", 2: "Wet / Damp", 3: "Snow",
+                4: "Frost / Ice", 5: "Flood", 9: "Unknown"
+            }[x])
+
         junction_detail = st.selectbox("Junction Type",
-            options=[0,13,16,17,18,19],
-            format_func=lambda x: {0:"Not at junction",13:"T-junction",16:"Crossroads",
-                                    17:"Multiple junction",18:"Roundabout",19:"Private drive"}[x])
+            options=[0, 13, 16, 17, 18, 19],
+            format_func=lambda x: {
+                0: "Not at junction", 13: "T-junction", 16: "Crossroads",
+                17: "Multiple junction", 18: "Roundabout", 19: "Private drive"
+            }[x])
+
         junction_control = st.selectbox("Junction Control",
-            options=[-1,1,2,3,4],
-            format_func=lambda x: {-1:"Not at junction",1:"Authorised person",
-                                    2:"Auto signal",3:"Stop sign",
-                                    4:"Give way / Uncontrolled"}[x])
+            options=[-1, 1, 2, 3, 4],
+            format_func=lambda x: {
+                -1: "Not at junction", 1: "Authorised person",
+                2: "Auto signal", 3: "Stop sign", 4: "Give way / Uncontrolled"
+            }[x])
+
         num_vehicles   = st.slider("Number of Vehicles",   1, 10, 2)
         num_casualties = st.slider("Number of Casualties", 1, 10, 1)
 
@@ -503,36 +497,43 @@ with left:
     sec("Vehicle & Time")
 
     c3, c4 = st.columns(2)
+
     with c3:
         vehicle_type = st.selectbox("Primary Vehicle Type",
-            options=[1,2,3,4,5,8,9,10,11,16,17,19,20,21,22,23],
+            options=[1, 2, 3, 4, 5, 8, 9, 10, 11, 16, 17, 19, 20, 21, 22, 23],
             format_func=lambda x: {
-                1:"Bicycle",2:"Motorcycle <50cc",3:"Motorcycle 50–125cc",
-                4:"Motorcycle 125–500cc",5:"Motorcycle 500cc+",8:"Taxi",
-                9:"Car",10:"Minibus",11:"Bus / Coach",16:"Horse",
-                17:"Agricultural",19:"Van",20:"HGV",
-                21:"Motorcycle unknown",22:"Electric motorcycle",23:"E-scooter"}[x],
-            index=6)
+                1: "Bicycle", 2: "Motorcycle <50cc", 3: "Motorcycle 50-125cc",
+                4: "Motorcycle 125-500cc", 5: "Motorcycle 500cc+", 8: "Taxi",
+                9: "Car", 10: "Minibus", 11: "Bus / Coach", 16: "Horse",
+                17: "Agricultural", 19: "Van", 20: "HGV",
+                21: "Motorcycle unknown", 22: "Electric motorcycle", 23: "E-scooter"
+            }[x], index=6)
+
         any_skidding = st.selectbox("Skidding / Overturning",
-            options=[0,1,2],
-            format_func=lambda x: {0:"No",1:"Yes — skidded",2:"Yes — overturned"}[x])
+            options=[0, 1, 2],
+            format_func=lambda x: {0: "No", 1: "Yes | skidded", 2: "Yes | overturned"}[x])
+
         carriageway_hazards = st.selectbox("Carriageway Hazard",
-            options=[0,1,2,7],
-            format_func=lambda x: {0:"None",1:"Object in road",
-                                    2:"Other vehicle",7:"Animal"}[x])
+            options=[0, 1, 2, 7],
+            format_func=lambda x: {
+                0: "None", 1: "Object in road",
+                2: "Other vehicle", 7: "Animal"
+            }[x])
 
     with c4:
         avg_vehicle_age = st.slider("Avg Vehicle Age (years)", 0, 30, 8)
         hour = st.slider("Hour of Day", 0, 23, 14)
-        minute = st.selectbox("Minute", [0,15,30,45], index=0)
+        minute = st.selectbox("Minute", [0, 15, 30, 45], index=0)
         day_of_week = st.selectbox("Day of Week",
-            options=[1,2,3,4,5,6,7],
-            format_func=lambda x: {1:"Monday",2:"Tuesday",3:"Wednesday",
-                                    4:"Thursday",5:"Friday",6:"Saturday",7:"Sunday"}[x],
-            index=4)
+            options=[1, 2, 3, 4, 5, 6, 7],
+            format_func=lambda x: {
+                1: "Monday", 2: "Tuesday", 3: "Wednesday",
+                4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"
+            }[x], index=4)
 
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
     predict_btn = st.button("Analyse Risk →")
+
 
 with right:
     st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
@@ -542,20 +543,24 @@ with right:
         t_sin, t_cos = time_to_sincos(hour, minute)
         d_sin, d_cos = day_to_sincos(day_of_week)
 
+        # compute interaction feature - same as training pipeline
+        speed_x_area = speed_limit * urban_or_rural
+
         features = np.array([[
             road_type, speed_limit, urban_or_rural,
             junction_detail, junction_control,
             light_conditions, weather, road_surface,
             carriageway_hazards, num_vehicles, num_casualties,
             vehicle_type, any_skidding, avg_vehicle_age,
-            t_sin, t_cos, d_sin, d_cos
+            t_sin, t_cos, d_sin, d_cos,
+            speed_x_area
         ]])
 
         prob = model.predict_proba(features)[0][1]
         risk = get_risk(prob)
         prob_pct = round(prob * 100, 1)
         meter_w = min(round(prob * 100), 100)
-        multiplier = round(prob * 100 / 5.8, 1)
+        multiplier = round(prob * 100 / 1.5, 1)
 
         risk_labels = {"HIGH": "High Risk", "MEDIUM": "Medium Risk", "LOW": "Low Risk"}
 
@@ -567,7 +572,7 @@ with right:
             </div>
             <div class="risk-number {risk}">{prob_pct}<sup>%</sup></div>
             <div class="risk-baseline">
-                Population baseline: <strong>5.8%</strong> &nbsp;·&nbsp;
+                Population baseline: <strong>1.5%</strong> &nbsp;·&nbsp;
                 This scenario is <strong>{multiplier}× higher</strong> than average
             </div>
             <div class="prog-wrap">
@@ -586,18 +591,18 @@ with right:
                 "The model identifies this combination as genuinely high-risk. "
                 "Across 106,000 historical STATS19 accidents, similar conditions have produced "
                 "fatal outcomes at a significantly elevated rate. "
-                "This is not a guarantee — it is a signal that warrants serious attention."
+                "This is not a guarantee, it is a signal that warrants serious attention."
             ),
             "MEDIUM": (
-                "Mixed signals — some conditions raise risk, others reduce it. "
+                "Mixed signals, some conditions raise risk, others reduce it. "
                 "The model carries uncertainty here, which is itself informative. "
                 "You are not in the clear, but not in the most dangerous category either. "
-                "Review the SHAP breakdown below to see what is driving the concern."
+                "Review the feature breakdown below to see what is driving the concern."
             ),
             "LOW": (
                 "These conditions closely resemble non-fatal accidents in the historical record. "
                 "The model is reasonably confident this is a lower-risk scenario. "
-                "Road conditions can change rapidly — treat this as guidance, not a guarantee."
+                "Road conditions can change rapidly, treat this as guidance, not a guarantee."
             )
         }
 
@@ -608,14 +613,15 @@ with right:
         st.markdown("<div class='div'></div>", unsafe_allow_html=True)
         sec("Model Performance")
 
+        # updated metrics from v2 model
         st.markdown("""
         <div class="stat-grid">
             <div class="stat-chip">
-                <div class="stat-chip-val">0.800</div>
+                <div class="stat-chip-val">0.825</div>
                 <div class="stat-chip-lbl">AUC – ROC</div>
             </div>
             <div class="stat-chip">
-                <div class="stat-chip-val">53%</div>
+                <div class="stat-chip-val">71%</div>
                 <div class="stat-chip-lbl">Fatal Recall</div>
             </div>
             <div class="stat-chip">
@@ -628,9 +634,9 @@ with right:
             </div>
         </div>
         <div class="stat-note">
-            AUC 0.800 means the model ranks a fatal accident above a non-fatal one 80% of the time
-            (random baseline = 0.500). Fatal recall of 53% means roughly half of all real fatalities
-            are detected — versus zero by a naïve baseline.
+            AUC 0.825 means the model ranks a fatal accident above a non-fatal one 82.5% of the time
+            (random baseline = 0.500). Fatal recall of 71% means roughly 7 in 10 real fatalities
+            are detected | versus zero by a naive baseline.
         </div>
         """, unsafe_allow_html=True)
 
@@ -639,23 +645,34 @@ with right:
 
         st.markdown("""
         <div class="shap-legend">
-            <div class="shap-legend-item"><div class="shap-legend-dot up"></div> Raises risk</div>
-            <div class="shap-legend-item"><div class="shap-legend-dot dn"></div> Lowers risk</div>
+            <div class="shap-legend-item">
+                <div class="shap-legend-dot up"></div> Raises fatal risk
+            </div>
+            <div class="shap-legend-item">
+                <div class="shap-legend-dot dn"></div> Lowers fatal risk
+            </div>
+        </div>
+        <div class="explain-box" style="margin-bottom:14px">
+            <p>These values come from SHAP, a technique that measures how much each 
+            feature contributed to the model's predictions across all 21,000 test accidents. 
+            Higher bar = stronger influence on whether an accident is predicted fatal.</p>
         </div>
         """, unsafe_allow_html=True)
 
+        # updated SHAP values from v2 model
         top_features = [
-            ("speed_limit", 0.530, True),
-            ("no. of vehicles", 0.450, True),
-            ("any_skidding", 0.436, True),
-            ("time_cos", 0.290, True),
-            ("time_sin", 0.277, True),
-            ("urban_or_rural", 0.256, False),
-            ("avg_vehicle_age", 0.204, True),
-            ("road_type", 0.207, False),
+            ("no. of vehicles", 0.430, True),
+            ("speed x area", 0.412, True),
+            ("vehicle type", 0.294, True),
+            ("speed limit", 0.272, True),
+            ("any skidding", 0.260, True),
+            ("road type", 0.207, False),
+            ("no. of casualties",0.200, True),
+            ("time cos", 0.210, True),
         ]
 
         max_val = max(f[1] for f in top_features)
+
         for name, val, positive in top_features:
             cls  = "up" if positive else "dn"
             sign = "+" if positive else "−"
@@ -681,7 +698,8 @@ with right:
                 </svg>
             </div>
             <div class="empty-title">No analysis run yet</div>
-            <div class="empty-sub">Set road and vehicle conditions on the left, then click <strong>Analyse Risk →</strong></div>
+            <div class="empty-sub">Set road and vehicle conditions on the left,
+            then click <strong>Analyse Risk →</strong></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -690,3 +708,8 @@ st.markdown("""
     AccidentIQ · UK STATS19 Data · Department for Transport · Model: XGBoost · Not for operational use
 </div>
 """, unsafe_allow_html=True)
+
+
+
+
+
