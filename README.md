@@ -79,6 +79,7 @@ streamlit run app.py
 
 ## Notes
 
+- The project is ongoing and with continuous improvements.
 - Built on UK data. Risk thresholds and feature weights reflect UK road conditions and may not transfer directly to Indian roads.
 - Not for operational or safety-critical use. This is a personal data project.
 - SHAP values shown in the UI are global importances computed on the 21K test split, not per-prediction local values.
