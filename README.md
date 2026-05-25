@@ -9,8 +9,6 @@
 
 The risk changes depending on what you input, speed limit, time of day, road surface, vehicle type because the same road means something different at 2am on a wet motorway versus noon on a dry urban street.
 
----
-
 `Python 3.11` `Streamlit` `XGBoost` `scikit-learn` `SHAP` `joblib` `UK STATS19`
 
 ---
@@ -24,20 +22,16 @@ The risk changes depending on what you input, speed limit, time of day, road sur
 
 Model performance: AUC-ROC 0.800, Fatal Recall 53%. A random baseline scores 0.500 AUC and catches zero fatalities.
 
----
+### Improvements in Version 2
 
-<h2 align="center">Project Screenshots</h2>
+- Sentinel values were handled once again, after reperforming EDA.
+- Added an interaction feature speed_x_area (Now 19 features)
+- Model performance: AUC-ROC 0.825, Fatal Recall 71%
+
+---
 
 <p align="center">
   <img src="./images/image1.png" width="90%" alt="LowRisk" />
-</p>
-
-<p align="center">
-  <img src="./images/image2.png" width="90%" alt="Highrisk" />
-</p>
-
-<p align="center">
-  <img src="./images/image3.png" width="90%" alt="more" />
 </p>
 
 ---
@@ -62,7 +56,7 @@ Place the cleaned CSV at `data/stats19_clean.csv`. The notebooks in `/notebooks`
 **3. Train the model**
 
 ```bash
-jupyter notebook notebooks/03_model_training.ipynb
+jupyter notebook notebooks/4_modeling_v2.ipynb
 ```
 
 This saves `xgb_fatal_predictor.pkl` to `models/`.
