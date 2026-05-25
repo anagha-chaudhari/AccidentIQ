@@ -20,13 +20,13 @@ The risk changes depending on what you input, speed limit, time of day, road sur
 - Returns a fatal risk probability with a HIGH / MEDIUM / LOW classification
 - Shows SHAP-based feature importance so you can see exactly what is driving the prediction
 
-Model performance: AUC-ROC 0.800, Fatal Recall 53%. A random baseline scores 0.500 AUC and catches zero fatalities.
+*Model performance: AUC-ROC 0.800, Fatal Recall 53%*. A random baseline scores 0.500 AUC and catches zero fatalities.
 
 ### Improvements in Version 2
 
 - Sentinel values were handled once again, after reperforming EDA.
 - Added an interaction feature speed_x_area (Now 19 features)
-- Model performance: AUC-ROC 0.825, Fatal Recall 71%
+- *Model performance: AUC-ROC 0.825, Fatal Recall 71%*
 
 ---
 
