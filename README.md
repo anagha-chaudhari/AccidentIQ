@@ -30,6 +30,7 @@ The risk changes depending on what you input, speed limit, time of day, road sur
 
 ---
 
+UI Demo
 <p align="center">
   <img src="./images/v2image.png" width="90%" alt="LowRisk" />
 </p>
