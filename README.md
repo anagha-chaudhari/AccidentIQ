@@ -39,11 +39,15 @@ UI Demo
 
 ## Setup
 
+**Clone and install**
+
 ```bash
 git clone https://github.com/yourname/accidentiq.git
 cd accidentiq
 pip install -r requirements.txt
 ```
+
+**Run the app**
 
 ```bash
 uvicorn main:app --reload

@@ -621,7 +621,7 @@ with right:
                 <div class="stat-chip-lbl">AUC – ROC</div>
             </div>
             <div class="stat-chip">
-                <div class="stat-chip-val">71%</div>
+                <div class="stat-chip-val">81%</div>
                 <div class="stat-chip-lbl">Fatal Recall</div>
             </div>
             <div class="stat-chip">
@@ -635,7 +635,7 @@ with right:
         </div>
         <div class="stat-note">
             AUC 0.825 means the model ranks a fatal accident above a non-fatal one 82.5% of the time
-            (random baseline = 0.500). Fatal recall of 71% means roughly 7 in 10 real fatalities
+            (random baseline = 0.500). Fatal recall of 81% means roughly 8 in 10 real fatalities
             are detected | versus zero by a naive baseline.
         </div>
         """, unsafe_allow_html=True)
