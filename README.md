@@ -26,10 +26,11 @@ The risk changes depending on what you input, speed limit, time of day, road sur
 
 - Sentinel values were handled once again, after reperforming EDA.
 - Added an interaction feature speed_x_area (Now 19 features)
-- *Model performance: AUC-ROC 0.825, Fatal Recall 71%*
+- *Model performance: AUC-ROC 0.825, Fatal Recall 81%*
 
 ---
 
+UI Demo
 <p align="center">
   <img src="./images/v2image.png" width="90%" alt="LowRisk" />
 </p>
@@ -38,30 +39,11 @@ The risk changes depending on what you input, speed limit, time of day, road sur
 
 ## Setup
 
-**1. Clone and install**
-
 ```bash
 git clone https://github.com/yourname/accidentiq.git
 cd accidentiq
 pip install -r requirements.txt
 ```
-
-**2. Get the data**
-
-Download the STATS19 accident data from the UK Department for Transport:
-https://www.data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-safety-data
-
-Place the cleaned CSV at `data/stats19_clean.csv`. The notebooks in `/notebooks` walk through the cleaning and feature engineering steps I performed. You may also view the data folder.
-
-**3. Train the model**
-
-```bash
-jupyter notebook notebooks/4_modeling_v2.ipynb
-```
-
-This saves `xgb_fatal_predictor.pkl` to `models/`.
-
-**4. Run the app**
 
 ```bash
 uvicorn main:app --reload
